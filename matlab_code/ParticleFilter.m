@@ -41,7 +41,8 @@ classdef ParticleFilter < handle
             diff = diff .^ 2;
             diff = sum(diff);
             diff = sqrt(diff);
-            self.spread = diff; % * weights.';
+            %mean(range(self.particles));
+            self.spread = sum(diff / size(diff, 2)); %* weights.';
         end
     end
     

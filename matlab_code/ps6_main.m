@@ -42,16 +42,17 @@ num_particles = 1000;
 % TODO: try particles within the window to find...might give better results
 pf = ParticleFilter(vidWidth, vidHeight, num_particles);
 
-% aviobj = avifile('example.avi')
+video_writer = VideoWriter('../output_images/ps6-1-1.avi');
+open(video_writer);
 
 % m(:, :, :, 1) = frame;
-nStart = 60;
+% m = zeros(vidHeight, vidWidth, 3, nFramesToTrack);
+nStart = 2;
 for k = nStart:nFramesToTrack
     fprintf(1, '%d of %d frames\n', k, nFrames);
     % Predict (using random dynamics model)
     dynamics = rand(vidHeight, vidWidth);
     pf.elapseTime(@(pos) random_dynamics_model(dynamics, pos));
-%     pf.elapseTime2()
     
     % Correct
     frame = readd(debate, k);
@@ -63,7 +64,7 @@ for k = nStart:nFramesToTrack
     Pz_x  = Pz_x / sum(Pz_x);
     pf.observe(Pz_x);
     
-    im = visualize_tracker(frame, size(windowG, 1), pf);
+    im = visualize_tracker(video_writer, frame, size(windowG, 1), pf);
     
     m(:, :, :, k - (nStart - 1)) = im;
 
@@ -86,18 +87,24 @@ for k = nStart:nFramesToTrack
     end
 end
 
+close(video_writer);
+
 fps = 30;
 implay(m,fps)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure(1)
+f = figure(1)
 imshow(track_patch)
-figure(2)
+saveas(f, '../output_images/ps6-1-1-fig1.jpg');
+f = figure(2)
 imshow(track_viz_28)
-figure(3)
+saveas(f, '../output_images/ps6-1-1-fig2.jpg');
+f = figure(3)
 imshow(track_viz_84)
-figure(4)
+saveas(f, '../output_images/ps6-1-1-fig3.jpg');
+f = figure(4)
 imshow(track_viz_144)
+saveas(f, '../output_images/ps6-1-1-fig4.jpg');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
 
