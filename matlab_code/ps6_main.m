@@ -113,8 +113,82 @@ end
 if (prob == 1 && subprob == '5') || prob == -1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  1.5  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Your code
+debate = VideoReader('../input_images/noisy_debate.avi');
 
+nFrames = debate.NumberOfFrames;
+nFramesToTrack = 144;
+vidHeight = debate.Height;
+vidWidth = debate.Width;
+
+% sigma = sqrt(10^2/255);
+sigma = 1/255;
+% Read the first frame
+frame = readd(debate, 1);
+
+% The range of the window to capture romney's head
+window_range_x = 320:430;
+window_range_y = 192:302;
+
+track_patch = frame(window_range_y, window_range_x, :);
+% Convert to grayscale, to use for tracking
+frameG  = rgb2gray(frame);
+windowG = frameG(window_range_y, window_range_x);
+
+num_particles = 1000;
+
+% Initial particle distribution...one in every position
+% TODO: try particles within the window to find...might give better results
+pf = ParticleFilter(vidWidth, vidHeight, num_particles);
+
+video_writer = VideoWriter('../output_images/ps6-1-5.avi');
+open(video_writer);
+
+% m(:, :, :, 1) = frame;
+% m = zeros(vidHeight, vidWidth, 3, nFramesToTrack);
+nStart = 2;
+for k = nStart:nFramesToTrack
+    fprintf(1, '%d of %d frames\n', k, nFrames);
+    % Predict (using random dynamics model)
+    dynamics = rand(vidHeight, vidWidth);
+    pf.elapseTime(@(pos) random_dynamics_model(dynamics, pos));
+    
+    % Correct
+    frame = readd(debate, k);
+    % Convert to grayscale, to use for tracking
+    frameG = rgb2gray(frame);
+    
+    mse   = calc_mse(frameG, windowG, pf.candidates);
+    Pz_x  = exp(-mse/(2 * sigma));
+    Pz_x  = Pz_x / sum(Pz_x);
+    pf.observe(Pz_x);
+    
+    im = visualize_tracker(video_writer, frame, size(windowG, 1), pf);
+    
+    m(:, :, :, k - (nStart - 1)) = im;
+
+    if k == 14
+        pf.center
+        pf.spread
+        noisy_viz_14 = im;
+    end
+
+    if k == 32
+        pf.center
+        pf.spread
+        noisy_viz_32 = im;
+    end
+    
+    if k == 46
+        pf.center
+        pf.spread
+        noisy_viz_46 = im;
+    end
+end
+
+close(video_writer);
+
+fps = 30;
+implay(m,fps)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure(5)
 imshow(noisy_viz_14)
