@@ -1,3 +1,10 @@
+% Problem Set 6 - Particle Tracking
+% Name: Jesse Rosalia
+% GT Username: jrosalia3
+% Section: A
+%
+% vizualize_tracker - helper method to annotate a frame of video with tracker information
+%
 function [ image ] = visualize_tracker( movie, frame, window_width, pf )
 
     f = figure('visible','off');

@@ -1,3 +1,10 @@
+% Problem Set 6 - Particle Tracking
+% Name: Jesse Rosalia
+% GT Username: jrosalia3
+% Section: A
+%
+% calc_mse - Calculate the mean squared error between a window, and tiles pulled out of a frame about a set of estimated centers
+%
 function [ mse ] = calc_mse(frame, window, centers)
 
     window_size = size(window);

@@ -1,7 +1,7 @@
 % Problem Set 6 - Particle Tracking
-% Name: 
-% GT Username: 
-% Section: <A vs. GR?>
+% Name: Jesse Rosalia
+% GT Username: jrosalia3
+% Section: A
 %
 %   msdfun - Mean Squared Difference function
 %
